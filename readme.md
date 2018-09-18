@@ -2,50 +2,9 @@
 
 ## Description
 
-LevelDB JNI gives you a Java interface to the 
-[LevelDB](http://code.google.com/p/leveldb/) C++ library
-which is a fast key-value storage library written at Google 
-that provides an ordered mapping from string keys to string values.. 
-
-# Getting the JAR
-
-Just add the following jar to your java project:
-[leveldbjni-all-1.8.jar](http://repo2.maven.org/maven2/org/fusesource/leveldbjni/leveldbjni-all/1.8/leveldbjni-all-1.8.jar)
-
-## Using as a Maven Dependency
-
-You just need to add the following dependency to your Maven POM:
-
-    <dependencies>
-      <dependency>
-        <groupId>org.fusesource.leveldbjni</groupId>
-        <artifactId>leveldbjni-all</artifactId>
-        <version>1.8</version>
-      </dependency>
-    </dependencies>
-
-By using the `leveldbjni-all` dependency, you get the OS specific native drivers for all supported platforms.
-
-If you want to use only one or some but not all native drivers, then directly use the OS specific dependency instead of `leveldbjni-all`. For example to use Linux 64 bit, use this dependency:
-
-    <dependencies>
-      <dependency>
-        <groupId>org.fusesource.leveldbjni</groupId>
-        <artifactId>leveldbjni-linux64</artifactId>
-        <version>1.8</version>
-      </dependency>
-    </dependencies>
-
-If you have the leveljni native driver DLL/SO library already separately installed e.g. by a package manager (see [issue 90](https://github.com/fusesource/leveldbjni/issues/90)), then you could depend on the Java "launcher" without the JAR containing the OS specific native driver like this:
-
-      <dependency>
-        <groupId>org.fusesource.leveldbjni</groupId>
-        <artifactId>leveldbjni</artifactId>
-        <version>1.8</version>
-      </dependency>
-
-Lastly, another project unrelated to this project separately provides a (less mature) pure Java implementation of LevelDB, see [dain/leveldb](https://github.com/dain/leveldb).  Note that both that and this project share the same Maven artefact for the Level DB API interface (org.iq80.leveldb:leveldb-api).
-
+This fork of LevelDB JNI gives you a Java interface to the 
+[PebblesDB](https://github.com/utsaslab/pebblesdb) C++ library, which is
+a write-optimized key-value store built with FLSM (Fragmented Log-Structured Merge Tree) data structure. FLSM is a modification of the standard log-structured merge tree data structure which aims at achieving higher write throughput and lower write amplification without compromising on read throughput. 
 
 ## API Usage:
 
@@ -203,21 +162,19 @@ See also [releasing.md](releasing.md):
 
 The following worked for me on:
 
- * OS X Lion with X Code 4
- * CentOS 5.6 (32 and 64 bit)
- * Ubuntu 12.04 (32 and 64 bit)
+ * Ubuntu 14.04 (64 bit)
  * apt-get install autoconf libtool
 
 ### Build Procedure
 
 Then download the snappy, leveldb, and leveldbjni project source code:
 
-    wget http://snappy.googlecode.com/files/snappy-1.0.5.tar.gz
+    wget https://src.fedoraproject.org/lookaside/pkgs/snappy/snappy-1.0.5.tar.gz/4c0af044e654f5983f4acbf00d1ac236/snappy-1.0.5.tar.gz
     tar -zxvf snappy-1.0.5.tar.gz
-    git clone git://github.com/chirino/leveldb.git
-    git clone git://github.com/fusesource/leveldbjni.git
+    git clone https://github.com/utsaslab/pebblesdb.git
+    git clone https://github.com/fusesource/leveldbjni.git
     export SNAPPY_HOME=`cd snappy-1.0.5; pwd`
-    export LEVELDB_HOME=`cd leveldb; pwd`
+    export PEBBLESDB_HOME=`cd pebblesdb; pwd`
     export LEVELDBJNI_HOME=`cd leveldbjni; pwd`
 
 <!-- In cygwin that would be
@@ -234,19 +191,26 @@ Compile the snappy project.  This produces a static library.
     
 Patch and Compile the leveldb project.  This produces a static library. 
     
-    cd ${LEVELDB_HOME}
-    export LIBRARY_PATH=${SNAPPY_HOME}
-    export C_INCLUDE_PATH=${LIBRARY_PATH}
-    export CPLUS_INCLUDE_PATH=${LIBRARY_PATH}
-    git apply ../leveldbjni/leveldb.patch
-    make libleveldb.a
+    cd ${PEBBLESDB_HOME}
+    git apply ../leveldbjni/pebblesdb.patch
+    mkdir -p build && cd build
+    cmake .. && make install -j16
+
 
 Now use maven to build the leveldbjni project. 
     
     cd ${LEVELDBJNI_HOME}
+    chmod a+x setup.sh
+    ./setup.sh
+    export LEVELDB_HOME=`cd pebblesdb; pwd`
     mvn clean install -P download -P ${platform}
 
-Replace ${platform} with one of the following platform identifiers (depending on the platform your building on):
+If "error: required file 'autotools/compile' not found" occurs, run :-  
+ 
+    touch ./leveldbjni-{platform}/target/native-build/autotools/compile
+    mvn install -P download -P ${platform}
+
+Replace ${platform} with one of the following platform identifiers (depending on the platform you are building on):
 
 * osx
 * linux32
