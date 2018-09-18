@@ -219,59 +219,15 @@ public class JniDB implements DB {
         if( db==null ) {
             throw new DBException("Closed");
         }
-        db.suspendCompactions();
+	// Not implemented
+        // db.suspendCompactions();
     }
+
     public void resumeCompactions() {
         if( db==null ) {
             throw new DBException("Closed");
         }
-        db.resumeCompactions();
+	// Not implemented
+        // db.resumeCompactions();
     }
-
-//    private static class Suspension {
-//        static long env = Util.EnvJNI.Default();
-//
-//        CountDownLatch suspended = new CountDownLatch(1);
-//        CountDownLatch resumed = new CountDownLatch(1);
-//        Callback callback = new Callback(this, "suspended", 1);
-//
-//        public Suspension() {
-//            Util.EnvJNI.Schedule(env, callback.getAddress(), 0);
-//        }
-//
-//        private long suspended(long arg) {
-//            suspended.countDown();
-//            try {
-//                resumed.await();
-//            } catch (InterruptedException e) {
-//            } finally {
-//                callback.dispose();
-//            }
-//            return 0;
-//        }
-//    }
-//
-//    int suspendCounter = 0;
-//    Suspension suspension = null;
-//
-//    public void suspendCompactions() throws InterruptedException {
-//        Suspension s = null;
-//        synchronized (this) {
-//            suspendCounter++;
-//            if( suspendCounter==1 ) {
-//                suspension = new Suspension();
-//            }
-//            s = suspension;
-//        }
-//        // Don't return until the compactions have suspended.
-//        s.suspended.await();
-//    }
-//
-//    synchronized public void resumeCompactions() {
-//        suspendCounter--;
-//        if( suspendCounter==0 ) {
-//            suspension.resumed.countDown();
-//            suspension = null;
-//        }
-//    }
 }
