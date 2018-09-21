@@ -172,7 +172,7 @@ Then download the snappy, leveldb, and leveldbjni project source code:
     wget https://src.fedoraproject.org/lookaside/pkgs/snappy/snappy-1.0.5.tar.gz/4c0af044e654f5983f4acbf00d1ac236/snappy-1.0.5.tar.gz
     tar -zxvf snappy-1.0.5.tar.gz
     git clone https://github.com/utsaslab/pebblesdb.git
-    git clone https://github.com/fusesource/leveldbjni.git
+    git clone https://github.com/abhijith97/leveldbjni
     export SNAPPY_HOME=`cd snappy-1.0.5; pwd`
     export PEBBLESDB_HOME=`cd pebblesdb; pwd`
     export LEVELDBJNI_HOME=`cd leveldbjni; pwd`
@@ -203,12 +203,8 @@ Now use maven to build the leveldbjni project.
     chmod a+x setup.sh
     ./setup.sh
     export LEVELDB_HOME=`cd pebblesdb; pwd`
+    autoreconf -i leveldbjni/src/main/native-package
     mvn clean install -P download -P ${platform}
-
-If "error: required file 'autotools/compile' not found" occurs, run :-  
- 
-    touch ./leveldbjni-{platform}/target/native-build/autotools/compile
-    mvn install -P download -P ${platform}
 
 Replace ${platform} with one of the following platform identifiers (depending on the platform you are building on):
 
