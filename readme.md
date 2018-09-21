@@ -221,7 +221,7 @@ Replace ${platform} with one of the following platform identifiers (depending on
 
 If your platform does not have the right auto-tools levels available
 just copy the `leveldbjni-${version}-SNAPSHOT-native-src.zip` artifact
-from a platform the does have the tools available then add the
+from a platform the does have the tools available, then add the
 following argument to your maven build:
 
     -Dnative-src-url=file:leveldbjni-${verision}-SNAPSHOT-native-src.zip
