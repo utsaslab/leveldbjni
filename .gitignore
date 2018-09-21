@@ -12,3 +12,4 @@ target
 .settings
 eclipse-classes
 /pebblesdb/
+autom4te.cache
