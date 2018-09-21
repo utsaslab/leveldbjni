@@ -151,8 +151,6 @@ Using a memory pool to make native memory allocations more efficient:
     
 ## Building
 
-See also [releasing.md](releasing.md):
-
 ### Prerequisites 
 
 * GNU compiler toolchain
@@ -162,8 +160,9 @@ See also [releasing.md](releasing.md):
 
 The following worked for me on:
 
- * Ubuntu 14.04 (64 bit)
- * apt-get install autoconf libtool
+ * Ubuntu 14.04, 16.06, 18.04 (64 bit)
+ 
+ Run : apt-get install autoconf libtool
 
 ### Build Procedure
 
@@ -227,4 +226,27 @@ following argument to your maven build:
 * `leveldbjni/target/leveldbjni-${version}.jar` : The java class file to the library.
 * `leveldbjni/target/leveldbjni-${version}-native-src.zip` : A GNU style source project which you can use to build the native library on other systems.
 * `leveldbjni-${platform}/target/leveldbjni-${platform}-${version}.jar` : A jar file containing the built native library using your currently platform.
+
+## Running YCSB Workloads with PebblesDB
+
+Firstly build this project for the specific platform. Refer above for building instructions.
+
+Then, clone the following fork of YCSB.
+
+    git clone https://github.com/abhijith97/YCSB
+    export YCSB_HOME=`cd YCSB; pwd`
+    cd ${YCSB_HOME}
+
+Copy the jars created by LevelDbJni.
+
+    mkdir ${YCSB_HOME}/pebblesdb/lib
+    cp ${LEVELDBJNI_HOME}/leveldbjni/target/*.jar ${YCSB_HOME}/pebblesdb/lib
+    cp ${LEVELDBJNI_HOME}/leveldbjni-{platform}/target/*.jar ${YCSB_HOME}/pebblesdb/lib
+
+Build the pebblesDB binding.
+
+    mvn -pl com.yahoo.ycsb:pebblesdb-binding -am clean package
+
+Run the YCSB workloads. Example command :-
     
+     java -cp pebblesdb/target/*:pebblesdb/target/dependency/*:pebblesdb/target/*:pebblesdb/lib/*: com.yahoo.ycsb.Client -load -db com.yahoo.ycsb.db.PebblesDbClient -P workloads/workloada
