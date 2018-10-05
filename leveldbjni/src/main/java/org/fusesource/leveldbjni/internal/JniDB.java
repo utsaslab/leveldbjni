@@ -219,7 +219,13 @@ public class JniDB implements DB {
         if( db==null ) {
             throw new DBException("Closed");
         }
-	// Not implemented
+
+        /*
+         *(abhijith97) To fix issue : https://github.com/utsaslab/pebblesdb/issues/2
+         * Since pebblesDB do not support suspendCompactions, the below call,
+         * "db.suspendCompactions()" is invalid.
+         */
+
         // db.suspendCompactions();
     }
 
@@ -227,7 +233,13 @@ public class JniDB implements DB {
         if( db==null ) {
             throw new DBException("Closed");
         }
-	// Not implemented
+
+        /*
+         *(abhijith97) To fix issue : https://github.com/utsaslab/pebblesdb/issues/2
+         * Since pebblesDB do not support resumeCompactions, the below call,
+         * "db.resumeCompactions()" is invalid.
+         */
+
         // db.resumeCompactions();
     }
 }

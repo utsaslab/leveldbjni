@@ -166,19 +166,19 @@ The following worked for me on:
 
 ### Build Procedure
 
-Then download the snappy, leveldb, and leveldbjni project source code:
+Then download the snappy, pebblesdb, and leveldbjni project source code:
 
     wget https://src.fedoraproject.org/lookaside/pkgs/snappy/snappy-1.0.5.tar.gz/4c0af044e654f5983f4acbf00d1ac236/snappy-1.0.5.tar.gz
     tar -zxvf snappy-1.0.5.tar.gz
     git clone https://github.com/utsaslab/pebblesdb.git
-    git clone https://github.com/abhijith97/leveldbjni
+    git clone https://github.com/utsaslab/leveldbjni.git
     export SNAPPY_HOME=`cd snappy-1.0.5; pwd`
     export PEBBLESDB_HOME=`cd pebblesdb; pwd`
     export LEVELDBJNI_HOME=`cd leveldbjni; pwd`
 
 <!-- In cygwin that would be
     export SNAPPY_HOME=$(cygpath -w `cd snappy-1.0.5; pwd`)
-    export LEVELDB_HOME=$(cygpath -w `cd leveldb; pwd`)
+    export PEBBLESDB_HOME=$(cygpath -w `cd pebblesdb; pwd`)
     export LEVELDBJNI_HOME=$(cygpath -w `cd leveldbjni; pwd`)
 -->
 
@@ -202,10 +202,10 @@ Now use maven to build the leveldbjni project.
     chmod a+x setup.sh
     ./setup.sh
     export LEVELDB_HOME=`cd pebblesdb; pwd`
-    autoreconf -i leveldbjni/src/main/native-package
+    export platform="linux64"
     mvn clean install -P download -P ${platform}
 
-Replace ${platform} with one of the following platform identifiers (depending on the platform you are building on):
+Here, ${platform} can be one of the following platform identifiers (depending on the platform you are building on):
 
 * osx
 * linux32
@@ -233,7 +233,7 @@ Firstly build this project for the specific platform. Refer above for building i
 
 Then, clone the following fork of YCSB.
 
-    git clone https://github.com/abhijith97/YCSB
+    git clone https://github.com/utsaslab/YCSB.git
     export YCSB_HOME=`cd YCSB; pwd`
     cd ${YCSB_HOME}
 
@@ -249,4 +249,4 @@ Build the pebblesDB binding.
 
 Run the YCSB workloads. Example command :-
     
-     java -cp pebblesdb/target/*:pebblesdb/target/dependency/*:pebblesdb/target/*:pebblesdb/lib/*: com.yahoo.ycsb.Client -load -db com.yahoo.ycsb.db.PebblesDbClient -P workloads/workloada
+     java -cp pebblesdb/target/*:pebblesdb/target/dependency/*:pebblesdb/lib/*: com.yahoo.ycsb.Client -load -db com.yahoo.ycsb.db.PebblesDbClient -P workloads/workloada
