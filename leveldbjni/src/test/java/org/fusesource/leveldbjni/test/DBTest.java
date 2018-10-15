@@ -378,55 +378,6 @@ public class DBTest extends TestCase {
 
     }
 
-    @Test
-    public void testCompactRanges() throws IOException, InterruptedException, DBException {
-        Options options = new Options().createIfMissing(true);
-        File path = getTestDirectory(getName());
-        DB db = factory.open(path, options);
-        if( db instanceof JniDB) {
-            Random r = new Random(0);
-            String data="";
-            for(int i=0; i < 1024; i++) {
-                data+= 'a'+r.nextInt(26);
-            }
-            for(int i=0; i < 5*1024; i++) {
-                db.put(bytes("row"+i), bytes(data));
-            }
-            for(int i=0; i < 5*1024; i++) {
-                db.delete(bytes("row" + i));
-            }
-
-            String stats = db.getProperty("leveldb.stats");
-            System.out.println(stats);
-
-            //                                     Compactions
-            //                         Level  Files Size(MB) Time(sec) Read(MB) Write(MB)
-            //                         --------------------------------------------------
-            assertFalse(stats.contains("1        0        0         0"));
-            assertFalse(stats.contains("2        0        0         0"));
-
-            // After the compaction, level 1 and 2 should not have any files in it..
-            ((JniDB) db).compactRange(null, null);
-
-            stats = db.getProperty("leveldb.stats");
-            System.out.println(stats);
-            assertTrue(stats.contains("1        0        0         0"));
-            assertTrue(stats.contains("2        0        0         0"));
-
-        }
-        db.close();
-    }
-
-    @Test
-    public void testSuspendAndResumeCompactions() throws Exception {
-        Options options = new Options().createIfMissing(true);
-        File path = getTestDirectory(getName());
-        DB db = factory.open(path, options);
-        db.suspendCompactions();
-        db.resumeCompactions();
-        db.close();
-    }
-
     public void assertEquals(byte[] arg1, byte[] arg2) {
         assertTrue(Arrays.equals(arg1, arg2));
     }
